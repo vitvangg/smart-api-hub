@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: smart-api-hub
+    restart: no
+    env_file:
+      - .env
+    # Đọc từ file .env hoặc từ environment của host (fallback)
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-express_typeorm}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # Lệnh kiểm tra PostgreSQL đã sẵn sàng nhận kết nối hay chưa
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-express_typeorm}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: express_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount toàn bộ source code vào container để hỗ trợ hot-reload khi dev
+      - ./:/usr/src/app
+      # Giữ lại node_modules trong container, không bị ghi đè bởi thư mục host
+      - node_modules:/usr/src/app/node_modules
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+    depends_on:
+      db:
+        # Chỉ khởi động service 'app' khi service 'db' vượt qua healthcheck
+        condition: service_healthy
+    # Cấu hình command chạy theo tuần tự: Mới vào container thì migrate, sau đó chay dev
+    command: /bin/sh -c "npm run migrate && npm run dev"
+
+volumes:
+  postgres_data:
+  node_modules:

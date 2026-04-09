@@ -1,0 +1,460 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "NodeJS API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/api/users": {
+      "get": {
+        "summary": "Lấy danh sách user",
+        "parameters": [
+          { "name": "_page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "_limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "q", "in": "query", "schema": { "type": "string" } },
+
+          { "name": "email", "in": "query", "description": "Lọc chính xác email", "schema": { "type": "string" } },
+          { "name": "email_like", "in": "query", "description": "Tìm email chứa chuỗi...", "schema": { "type": "string" } },
+          { "name": "email_ne", "in": "query", "description": "Lọc email khác với...", "schema": { "type": "string" } },
+          { "name": "email_gte", "in":"query", "description": "Lọc email lớn hơn hoặc bằng...", "schema": { "type": "string" } },
+          { "name": "email_lte", "in":"query", "description": "Lọc email nhỏ hơn hoặc bằng...", "schema": { "type": "string" } },
+
+
+          { "name": "role", "in": "query", "description": "Lọc chính xác role", "schema": { "type": "string", "enum": ["admin", "user"] } },
+          { "name": "role_like", "in": "query", "description": "Tìm role chứa chuỗi...", "schema": { "type": "string" } },
+          { "name": "role_ne", "in": "query", "description": "Lấy user không thuộc role...", "schema": { "type": "string" } },
+
+          { "name": "_sort", "in": "query", "schema": { "type": "string", "default": "created_at", "example": "created_at, updated_at, email, id, role" } },
+          { "name": "_order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "asc" } },
+
+          { "name": "_field", "in": "query", "description": "Chọn field trả về", "schema": { "type": "string", "example": "id,email,role" } },
+
+          { "name": "_embed", "in": "query", "description": "Nhúng bảng con", "schema": { "type": "string", "example": "posts" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Tạo user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tạo thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Lấy user theo id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Cập nhật user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cập nhật thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update full user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Xóa user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Xóa thành công"
+          }
+        }
+      }
+    },
+
+    "/api/posts": {
+      "get": {
+        "summary": "Lấy danh sách bài viết",
+        "parameters": [
+          { "name": "_page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "_limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "q", "in": "query", "schema": { "type": "string" } },
+
+          { "name": "_sort", "in": "query", "schema": { "type": "string", "default": "created_at", "example": "created_at, updated_at, title, id, content" } },
+          { "name": "_order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "asc" } },
+
+          { "name": "_field", "in": "query", "description": "Chọn field trả về", "schema": { "type": "string", "example": "id,title,content" } },
+          { "name": "_expand", "in": "query", "description": "Join bảng cha", "schema": { "type": "string", "example": "users" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Tạo bài viết",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tạo thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/sign-up": {
+      "post": {
+        "summary": "Đăng ký",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sign-Up"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đăng ký thành công"
+          }
+        }
+      }
+    },
+
+    "/auth/sign-in": {
+      "post": {
+        "summary": "Đăng nhập",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sign-In"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đăng nhập thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/users/{id}": {
+      "put": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "summary": "Cập nhật thông tin người dùng",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sign-Up"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cập nhật thành công"
+          }
+        }
+      },
+      "patch": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "summary": "Cập nhật một phần thông tin người dùng",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cập nhật thành công"
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "summary": "Xóa người dùng",
+        "responses": {
+          "204": {
+            "description": "Xóa thành công"
+          }
+        }
+       }
+    }
+  },
+
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "email": { "type": "string" },
+          "role": { "type": "string" }
+        }
+      },
+
+      "UserCreate": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" },
+          "role": { "type": "string" }
+        }
+      },
+
+      "UserUpdate": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "format": "email" }
+        }
+      },
+
+      "UserListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": { "type": "integer" },
+              "limit": { "type": "integer" },
+              "total": { "type": "integer" }
+            }
+          }
+        }
+      },
+
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "user_id": { "type": "integer" }
+        }
+      },
+
+      "PostCreate": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "user_id": { "type": "integer" }
+        }
+      },
+
+      "Sign-Up": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" },
+          "role": { "type": "string", "enum": ["user", "admin"], "default": "user" }
+        }
+      },
+
+      "Sign-In": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        }
+      }
+    },
+
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
