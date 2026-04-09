@@ -241,7 +241,7 @@
       }
     },
 
-    "/auth/sign-up": {
+    "/auth/register": {
       "post": {
         "summary": "Đăng ký",
         "requestBody": {
@@ -261,7 +261,7 @@
       }
     },
 
-    "/auth/sign-in": {
+    "/auth/login": {
       "post": {
         "summary": "Đăng nhập",
         "requestBody": {
@@ -288,7 +288,7 @@
       }
     },
 
-    "/users/{id}": {
+    "/auth/users/{id}": {
       "put": {
         "parameters": [
           {

@@ -60,7 +60,7 @@ describe("User API", () => {
   }
 
   // ========================= UPDATE =========================
-  describe("PATCH /users/:id", () => {
+  describe("PATCH /auth/users/:id", () => {
     it("❌ không cho phép user update người khác", async () => {
       const userA = users[0];
       const userB = users[1];
@@ -68,7 +68,7 @@ describe("User API", () => {
       const agent = await loginAs(userA.email);
 
       const res = await agent
-        .patch(`/users/${userB.id}`)
+        .patch(`/auth/users/${userB.id}`)
         .send({ email: "hack@gmail.com" });
 
       expect(res.status).toBe(403);
@@ -88,14 +88,14 @@ describe("User API", () => {
   });
 
   // ========================= DELETE =========================
-  describe("DELETE /users/:id", () => {
+  describe("DELETE /auth/users/:id", () => {
     it("❌ user không được xóa người khác", async () => {
       const userA = users[0];
       const userB = users[1];
 
       const agent = await loginAs(userA.email);
 
-      const res = await agent.delete(`/users/${userB.id}`);
+      const res = await agent.delete(`/auth/users/${userB.id}`);
 
       expect(res.status).toBe(403);
     });
@@ -105,7 +105,7 @@ describe("User API", () => {
 
       const agent = await loginAs(user.email);
 
-      const res = await agent.delete(`/users/${user.id}`);
+      const res = await agent.delete(`/auth/users/${user.id}`);
 
       expect(res.status).toBe(200);
     });
@@ -115,7 +115,7 @@ describe("User API", () => {
 
       const agent = await loginAs(admin.email);
 
-      const res = await agent.delete(`/users/${user.id}`);
+      const res = await agent.delete(`/auth/users/${user.id}`);
 
       expect(res.status).toBe(200);
     });
@@ -123,7 +123,7 @@ describe("User API", () => {
     it("❌ trả về 404 nếu xóa user không tồn tại", async () => {
       const agent = await loginAs(admin.email);
 
-      const res = await agent.delete(`/users/9999`);
+      const res = await agent.delete(`/auth/users/9999`);
 
       expect(res.status).toBe(404);
     });

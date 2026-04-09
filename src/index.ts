@@ -45,9 +45,8 @@ app.get("/health", async (req, res) => {
     }
 });
 
-
+app.use('/auth/users', routerUser);
 app.use('/auth', routerAuth);
-app.use('/users', routerUser);
 app.use('/api', routerResource);
 
 app.use(globalErrorHandler);
