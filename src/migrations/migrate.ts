@@ -11,7 +11,8 @@ export async function runMigration() {
   for (const table of Object.keys(schema)) {
     const exists = await qr.hasTable(table);
     if (!exists) {
-      const sample = schema[table][0];
+      const dataArray = schema[table];
+      const sample = dataArray[0];
 
       const colsArr = [
         `id SERIAL PRIMARY KEY`,
@@ -24,7 +25,8 @@ export async function runMigration() {
                 ? `"${k}" BOOLEAN`
                 : `"${k}" TEXT`
           )
-      ]
+      ];
+
       if (table === "audit_logs") {
         colsArr.push(`timestamp TIMESTAMP DEFAULT NOW()`);
       } else {
@@ -35,6 +37,35 @@ export async function runMigration() {
 
       await qr.query(`CREATE TABLE "${table}" (${cols})`);
       console.log(`✅ Đã tạo bảng "${table}"`);
+
+      if (dataArray && dataArray.length > 0) {
+        for (const row of dataArray) {
+          const keys = Object.keys(row);
+          const values = Object.values(row);
+
+          // Tạo chuỗi cột: "id", "title", "content"...
+          const columnsStr = keys.map((k) => `"${k}"`).join(", ");
+          
+          // Tạo chuỗi tham số cho PostgreSQL: $1, $2, $3...
+          const placeholdersStr = keys.map((_, i) => `$${i + 1}`).join(", ");
+
+          const insertQuery = `INSERT INTO "${table}" (${columnsStr}) VALUES (${placeholdersStr})`;
+          
+          // Truyền values mảng vào để TypeORM tự động map với $1, $2...
+          await qr.query(insertQuery, values);
+        }
+        console.log(`   ➔ Đã thêm ${dataArray.length} bản ghi vào bảng "${table}"`);
+
+        if (sample.hasOwnProperty("id")) {
+          try {
+            await qr.query(
+              `SELECT setval('"${table}_id_seq"', (SELECT MAX(id) FROM "${table}"))`
+            );
+          } catch (seqErr) {
+            console.log(`   ⚠ Không thể reset sequence cho bảng ${table}`);
+          }
+        }
+      }
     }
   }
 
@@ -43,7 +74,7 @@ export async function runMigration() {
 
 async function main() {
   try {
-    console.log("🚀 Start migration...");
+    console.log("🚀 Start migration & seeding...");
     await AppDataSource.initialize();
     await runMigration();
     console.log("✅ Done!");

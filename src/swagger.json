@@ -241,6 +241,17 @@
       }
     },
 
+    "/api/audit_logs": {
+      "get": {
+        "summary": "Lấy danh sách user",
+        "responses": {
+          "200": {
+            "description": "Thành công"
+          }
+        }
+      }
+    },
+
     "/auth/register": {
       "post": {
         "summary": "Đăng ký",
