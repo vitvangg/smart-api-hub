@@ -12,8 +12,5 @@ export const AppDataSource = new DataSource({
     logging: true,
     synchronize: false, // Tự động đồng bộ hóa schema, chỉ nên dùng trong development,
     migrations: [],
-    subscribers: [],
-    ssl: {
-        rejectUnauthorized: false,
-    },
+    subscribers: []
 })
