@@ -2,6 +2,8 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-18.x_|_20.x-green) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15.x-blue) ![Docker](https://img.shields.io/badge/Docker-Supported-2496ed) ![Express](https://img.shields.io/badge/Express-4.x-lightgrey)
 
+**🌐 Live Demo:** [Insert your deploy link here](https://smart-api-hub-2-e972.onrender.com/health)
+
 **Smart API Hub** is an advanced, production-ready backend boilerplate built with **Node.js**, **Express**, **TypeScript**, and **TypeORM**. It automatically generates dynamic RESTful CRUD endpoints and database tables based on a predefined `schema.json`. It is fully equipped with authentication, rate-limiting, data validation (Zod), and Swagger documentation.
 
 ---
@@ -10,6 +12,7 @@
 
 - **⚙️ Dynamic REST API:** Automatically maps API routes (`GET`, `POST`, `PATCH`, `DELETE`) to your database entities based on `schema.json`.
 - **🗄️ Auto DB Migration:** Reads `schema.json` and dynamically generates PostgreSQL tables, columns, and relationships without manual SQL scripts.
+- **📝 Built-in Audit Logging:** Automatically and asynchronously tracks all data-modifying events (CREATE, UPDATE, DELETE) into an `audit_logs` table. It securely captures `user_id`, `action`, `resource_name`, `record_id`, and `timestamp` in the background (fire-and-forget), ensuring zero impact on API response times.
 - **🔐 Authentication & Security:** Includes JWT-based authentication, password hashing (bcrypt), and Role-Based Access Control (RBAC). Includes advanced Rate Limiting.
 - **🛡️ Robust Validation:** Built-in payload validation and sanitization using **Zod**.
 - **🐳 Fully Dockerized:** `docker-compose` setup pre-configured for running the App and PostgreSQL database smoothly in isolation.
