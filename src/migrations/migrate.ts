@@ -1,8 +1,10 @@
 import fs from "fs";
+import path from "path";
 import { AppDataSource } from "../config/db";
 
 export async function runMigration() {
-  const schema = JSON.parse(fs.readFileSync("./schema.json", "utf-8"));
+  const schemaPath = path.join(process.cwd(), "schema.json");
+  const schema = JSON.parse(fs.readFileSync(schemaPath, "utf-8"));
   const qr = AppDataSource.createQueryRunner();
   await qr.connect();
 

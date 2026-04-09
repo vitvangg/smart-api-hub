@@ -10,6 +10,7 @@ import 'dotenv/config';
 import { rateLimiterMiddleware } from "./middleware/rate_limit.middleware";
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
+import path from "path";
 
 // create and setup express app
 export const app = express()
@@ -21,7 +22,7 @@ app.use(logger);
 app.use(rateLimiterMiddleware);
 
 // Swagger UI setup
-const swaggerDocument = JSON.parse(fs.readFileSync("src/swagger.json", "utf-8"));
+const swaggerDocument = JSON.parse(fs.readFileSync(path.join(process.cwd(), "src/swagger.json"), "utf-8"));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
