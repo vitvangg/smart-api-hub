@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-# Cài đặt dependencies (cả dev vì chạy "npm run dev")
+# Cài đặt dependencies
 RUN npm install
 
 # Copy toàn bộ src vào container
@@ -15,4 +15,5 @@ COPY . .
 # Expose HTTP port
 EXPOSE 3000
 
-# Lệnh khởi chạy được định nghĩa bên Docker Compose
+# Cấu hình lệnh khởi chạy (Chạy migrate xong rồi bật server)
+CMD /bin/sh -c "npm run migrate && npm start"
