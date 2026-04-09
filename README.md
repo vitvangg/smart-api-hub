@@ -5,22 +5,24 @@ Smart API Hub is an advanced boilerplate backend system utilizing Node.js, Expre
 ## Architecture Diagram
 
 ```mermaid
-architecture-beta
-    group api(cloud)[API & Microservices]
+graph TD
+    Client([Client Request])
     
-    service user(server)[Client Request]
-    service gateway(server)[Express router] in api
-    service auth(server)[Auth Middleware & Rate Limit] in api
-    service controller(server)[Controllers (User, Auth, Resource)] in api
-    service service_audit(server)[Audit Service (Async)] in api
-    service db(database)[PostgreSQL]
+    subgraph API["API & Microservices"]
+        Gateway[Express Router]
+        Auth[Auth Middleware & Rate Limit]
+        Controllers[Controllers: User, Auth, Dynamic Resource]
+        Audit[Audit Service - Async]
+    end
     
-    user:R --> L:gateway
-    gateway:B --> T:auth
-    auth:B --> T:controller
-    controller:B --> T:db
-    controller:R --> L:service_audit
-    service_audit:B --> T:db
+    DB[(PostgreSQL)]
+    
+    Client --> Gateway
+    Gateway --> Auth
+    Auth --> Controllers
+    Controllers --> DB
+    Controllers -. "Fire & Forget" .-> Audit
+    Audit --> DB
 ```
 
 ## Features

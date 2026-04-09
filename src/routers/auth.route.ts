@@ -5,8 +5,8 @@ import { catchAsync } from '../utils/catchAsync';
 
 const router = express.Router();
 
-router.post('/sign-up', catchAsync(signUp));
-router.post('/sign-in', catchAsync(signIn));
+router.post('/register', catchAsync(signUp));
+router.post('/login', catchAsync(signIn));
 router.get('/test', auth, (req, res) => {
     return res.status(200).json({ message: 'Test route accessed', user: (req as any).user });
 })
