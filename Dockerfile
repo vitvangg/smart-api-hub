@@ -12,6 +12,9 @@ RUN npm install
 # Copy toàn bộ src vào container
 COPY . .
 
+# Build project
+RUN npm run build
+
 # Expose HTTP port
 EXPOSE 3000
 
