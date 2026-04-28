@@ -1,4 +1,4 @@
-# 🚀 Smart API Hub
+# QuangNVV3 FSO_Smart API Hub
 
 ![Node.js](https://img.shields.io/badge/Node.js-18.x_|_20.x-green) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15.x-blue) ![Docker](https://img.shields.io/badge/Docker-Supported-2496ed) ![Express](https://img.shields.io/badge/Express-4.x-lightgrey)
 
